@@ -15,7 +15,7 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
-export const geminiAudit = async (
+export const geminiAuditContract = async (
     contract : string
 ) => {
   try {
@@ -79,3 +79,24 @@ export const geminiAudit = async (
     throw new Error("Audit generation failed.");
   }
 };
+
+
+export const geminiFixIssue = async (
+  contract: string,
+  suggestions: string,
+) =>{
+  try{
+    const response = (await model.startChat({
+      generationConfig,
+      history: [
+        {
+          role: "user",
+          parts: [{text:`Here is the smart contract with the following issues: ${suggestions}. Please provide a fixed version of the contract:\n\n${contract}`}],
+        },
+      ]
+    }))
+  }catch(error){
+    console.error("Error generating audit:", error);
+    throw new Error("Audit generation failed.");
+  }
+}
