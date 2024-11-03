@@ -1,12 +1,6 @@
 import OpenAI from "openai";
-import { chatAudit } from "@/utils/openai"
+import { geminiAuditContract, geminiFixIssue  } from "./gemini";
 
-const apiKey = process.env.NEXT_PUBLIC_API_KEY || "string"; 
-
-const openai = new OpenAI({
-  apiKey: apiKey,
-  dangerouslyAllowBrowser: true,
-});
 
 export const analyzeContract = async (
   contract: string,
@@ -15,8 +9,8 @@ export const analyzeContract = async (
   auditSmartContract: any
 ) => {
   setLoading(true);
-  const res :any = chatAudit(contract)
-  const auditResults = JSON.parse(res.choices[0].message.content);
+  const res :any = await geminiAuditContract(contract)
+  const auditResults = JSON.parse(res);
   setResults(auditResults);
   setLoading(false);
 };
@@ -29,17 +23,9 @@ export const fixIssues = async (
 ) => {
   setLoading(true);
 
-  const response = (await openai.chat.completions.create({
-    messages: [
-      {
-        role: "user",
-        content: `Here is the smart contract with the following issues: ${suggestions}. Please provide a fixed version of the contract:\n\n${contract}`,
-      },
-    ],
-    model: "gpt-3.5-turbo",
-  })) as any;
+  const response =  await geminiFixIssue(contract,suggestions) as any;
 
-  const fixedContract = response.choices[0].message.content;
+  const fixedContract = JSON.parse(response);
   setContract(fixedContract.trim());
   setLoading(false);
 };

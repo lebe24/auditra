@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const apiKey = process.env.NEXT_PUBLIC_API_KEY || "string";
+const apiKey = "AIzaSyBnPaVUw2dzpfMgxRyJbX5hDS7fs1aOEpc";
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -68,12 +68,16 @@ export const geminiAuditContract = async (
             }
           ]
           
+          P.S : Remove the code block markers  around the result.
           Thank you.`,
         },]}
       ],
     });
 
-    return response; // Return the AI's response for further processing
+    const result = await response.sendMessage("INSERT_INPUT_HERE");
+    console.log(result.response.text())
+    return result.response.text(); // Return the AI's response for further processing
+
   } catch (error) {
     console.error("Error generating audit:", error);
     throw new Error("Audit generation failed.");
@@ -95,6 +99,11 @@ export const geminiFixIssue = async (
         },
       ]
     }))
+
+    const result = await response.sendMessage("INSERT_INPUT_HERE");
+    console.log(result.response.text())
+    return result.response.text();
+
   }catch(error){
     console.error("Error generating audit:", error);
     throw new Error("Audit generation failed.");
